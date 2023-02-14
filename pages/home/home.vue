@@ -1,5 +1,10 @@
 <template>
 	<view>
+		<!-- 搜索组件 -->
+		<view class="search-box">
+		  <my-search @click="gotoSearch"></my-search>
+		</view>
+		
 		<!-- 轮播图 -->
 		<swiper :indicator-dots="true" :autoplay="true" :interval="3000" :duration="1000" >
 			<swiper-item v-for="(item,i) in swiperList" :key="i" >
@@ -109,6 +114,11 @@
 			  })
 			  this.floorList = res.message
 			},
+			gotoSearch(){
+				uni.navigateTo({
+					url:'/subpkg/search/search'
+				})
+			}
 			
 		}
 	}

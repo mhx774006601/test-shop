@@ -1,6 +1,6 @@
 <template>
   <view>
-	  dddddfsf
+1234567890
    <!-- <view class="goods-list">
       <view v-for="(goods, i) in goodsList" :key="i" @click="gotoDetail(goods)">
         <my-goods :goods="goods"></my-goods>

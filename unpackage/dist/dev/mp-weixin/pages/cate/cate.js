@@ -98,6 +98,29 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "recyclableRender", function() { return recyclableRender; });
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "components", function() { return components; });
 var components
+try {
+  components = {
+    mySearch: function () {
+      return __webpack_require__.e(/*! import() | components/my-search/my-search */ "components/my-search/my-search").then(__webpack_require__.bind(null, /*! @/components/my-search/my-search.vue */ 80))
+    },
+  }
+} catch (e) {
+  if (
+    e.message.indexOf("Cannot find module") !== -1 &&
+    e.message.indexOf(".vue") !== -1
+  ) {
+    console.error(e.message)
+    console.error("1. 排查组件名称拼写是否正确")
+    console.error(
+      "2. 排查组件是否符合 easycom 规范，文档：https://uniapp.dcloud.net.cn/collocation/pages?id=easycom"
+    )
+    console.error(
+      "3. 若组件不符合 easycom 规范，需手动引入，并在 components 中注册该组件"
+    )
+  } else {
+    throw e
+  }
+}
 var render = function () {
   var _vm = this
   var _h = _vm.$createElement
@@ -137,10 +160,15 @@ __webpack_require__.r(__webpack_exports__);
 "use strict";
 /* WEBPACK VAR INJECTION */(function(uni) {
 
+var _interopRequireDefault = __webpack_require__(/*! @babel/runtime/helpers/interopRequireDefault */ 4);
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.default = void 0;
+var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ 40));
+var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ 42));
+//
+//
 //
 //
 //
@@ -181,13 +209,68 @@ var _default = {
   data: function data() {
     return {
       // 当前设备可用的高度
-      wh: 0
+      wh: 0,
+      //分类数据列表
+      cateList: [],
+      active: 0,
+      //二级分类的列表
+      cateLevel2: [],
+      scrollTop: 0
     };
   },
   onLoad: function onLoad() {
     var sysInfo = uni.getSystemInfoSync();
-    console.log(sysInfo);
-    this.wh = sysInfo.windowHeight;
+    // console.log(sysInfo)
+    this.wh = sysInfo.windowHeight - 50;
+    this.getCateList();
+  },
+  methods: {
+    getCateList: function getCateList() {
+      var _this = this;
+      return (0, _asyncToGenerator2.default)( /*#__PURE__*/_regenerator.default.mark(function _callee() {
+        var _yield$uni$$http$get, res;
+        return _regenerator.default.wrap(function _callee$(_context) {
+          while (1) {
+            switch (_context.prev = _context.next) {
+              case 0:
+                _context.next = 2;
+                return uni.$http.get('/api/public/v1/categories');
+              case 2:
+                _yield$uni$$http$get = _context.sent;
+                res = _yield$uni$$http$get.data;
+                if (!(res.meta.status !== 200)) {
+                  _context.next = 6;
+                  break;
+                }
+                return _context.abrupt("return", uni.$showMsg());
+              case 6:
+                _this.cateList = res.message;
+                //为二级分类赋值
+                _this.cateLevel2 = res.message[0].children;
+              case 8:
+              case "end":
+                return _context.stop();
+            }
+          }
+        }, _callee);
+      }))();
+    },
+    activeChanged: function activeChanged(i) {
+      this.active = i;
+      this.cateLevel2 = res.message[i].children;
+      this.scrollTop = this.scrollTop === 0 ? 1 : 0;
+    },
+    // 跳转到商品列表页面
+    gotoGoodsList: function gotoGoodsList(item) {
+      uni.navigateTo({
+        url: '/subpkg/goods_list/goods_list?cid=' + item.cat_id
+      });
+    },
+    gotoSearch: function gotoSearch() {
+      uni.navigateTo({
+        url: '/subpkg/search/search'
+      });
+    }
   }
 };
 exports.default = _default;
