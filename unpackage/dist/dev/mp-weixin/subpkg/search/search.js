@@ -22,6 +22,9 @@ try {
     uniIcons: function () {
       return Promise.all(/*! import() | uni_modules/uni-icons/components/uni-icons/uni-icons */[__webpack_require__.e("common/vendor"), __webpack_require__.e("uni_modules/uni-icons/components/uni-icons/uni-icons")]).then(__webpack_require__.bind(null, /*! @/uni_modules/uni-icons/components/uni-icons/uni-icons.vue */ 87))
     },
+    uniTag: function () {
+      return __webpack_require__.e(/*! import() | uni_modules/uni-tag/components/uni-tag/uni-tag */ "uni_modules/uni-tag/components/uni-tag/uni-tag").then(__webpack_require__.bind(null, /*! @/uni_modules/uni-tag/components/uni-tag/uni-tag.vue */ 118))
+    },
   }
 } catch (e) {
   if (
@@ -44,6 +47,15 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
+  var g0 = _vm.searchResults.length
+  _vm.$mp.data = Object.assign(
+    {},
+    {
+      $root: {
+        g0: g0,
+      },
+    }
+  )
 }
 var recyclableRender = false
 var staticRenderFns = []
@@ -85,7 +97,23 @@ Object.defineProperty(exports, "__esModule", {
 });
 exports.default = void 0;
 var _regenerator = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/regenerator */ 40));
+var _toConsumableArray2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/toConsumableArray */ 18));
 var _asyncToGenerator2 = _interopRequireDefault(__webpack_require__(/*! @babel/runtime/helpers/asyncToGenerator */ 42));
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -107,8 +135,13 @@ var _default = {
       timer: null,
       kw: '',
       // 搜索结果的列表
-      searchResults: []
+      searchResults: [],
+      //搜索历史的数组
+      historyList: []
     };
+  },
+  onLoad: function onLoad() {
+    this.historyList = JSON.parse(uni.getStorageSync('kw') || '[]');
   },
   methods: {
     //input 输入事件处理函数
@@ -149,7 +182,8 @@ var _default = {
                 return _context.abrupt("return", uni.$showMsg());
               case 9:
                 _this2.searchResults = res.message;
-              case 10:
+                _this2.saveSearchHistory();
+              case 11:
               case "end":
                 return _context.stop();
             }
@@ -162,6 +196,30 @@ var _default = {
       uni.navigateTo({
         url: '/subpkg/goods_detail/goods_detail?goods_id=' + item.goods_id
       });
+    },
+    saveSearchHistory: function saveSearchHistory() {
+      // this.historyList.push(this.kw)
+      var set = new Set(this.historyList);
+      set.delete(this.kw);
+      set.add(this.kw);
+      this.historyList = Array.from(set);
+
+      //对搜索历史数据进行持久化存储
+      uni.setStorageSync('kw', JSON.stringify(this.historyList));
+    },
+    clean: function clean() {
+      this.historyList = [];
+      uni.setStorageSync('kw', '[]');
+    },
+    gotoGoodsList: function gotoGoodsList(kw) {
+      uni.navigateTo({
+        url: '/subpkg/goods_list/goods_list?query=' + kw
+      });
+    }
+  },
+  computed: {
+    histories: function histories() {
+      return (0, _toConsumableArray2.default)(this.historyList).reverse();
     }
   }
 };
